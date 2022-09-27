@@ -1,0 +1,87 @@
+---
+title: "P8157 Homework 1 yz4184"
+author: "Yunlin Zhou"
+date: '2022-09-27'
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(ggplot2)
+library(lattice)
+library(patchwork)
+library(Hotelling)
+knitr::opts_chunk$set(echo = TRUE,
+                      warning = FALSE,
+                      message = FALSE)
+```
+
+
+```{r, import the data}
+tlc = read.table("./TLC.dat") %>% 
+  janitor::clean_names() %>% 
+  rename(id = v1,
+         group = v2,
+         week0 = v3,
+         week1 = v4,
+         week4 = v5,
+         week6 = v6)%>%
+  mutate(group = recode(group,"P" = 0,"A" = 1))%>%
+           as.data.frame()
+
+zerbe2 = read.table("./ZERBE2.DAT") %>% 
+  janitor::clean_names() %>% 
+  rename(group = v1,
+         id = v2,
+         "0h" = v3,
+         "0.5h" = v4,
+         "1h" = v5,
+         "1.5h" = v6,
+         "2h" = v7,
+         "3h" = v8)
+```
+
+
+# Part A
+
+```{r}
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
