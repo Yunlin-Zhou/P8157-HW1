@@ -180,7 +180,7 @@ tlc_test2
 #### (a)
 
 ```{r}
-z_test1 <- hotelling.test(.~group, data = zerbe2[,-2])
+z_test1 <- hotelling.test(.~assignment, data = zerbe2[,-2])
 z_test1
 ```
 
