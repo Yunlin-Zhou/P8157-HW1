@@ -31,7 +31,7 @@ tlc = read.table("./TLC.dat") %>%
 
 zerbe2 = read.table("./ZERBE2.DAT") %>% 
   janitor::clean_names() %>% 
-  rename(group = v1,
+  rename(assignment = v1,
          id = v2,
          "0h" = v3,
          "0.5h" = v4,
@@ -173,21 +173,93 @@ tlc_test2
 ```
 
 
+## 2
+
+### Hotelling's T2 test
+
+#### (a)
+
+```{r}
+z_test1 <- hotelling.test(.~group, data = zerbe2[,-2])
+z_test1
+```
 
 
+#### (b)
+
+```{r}
+zerb_1 = t(zerbe2[,-c(1:2)])
+cmat_z = matrix(c(-1,0,0,0,0,
+         1,-1,0,0,0,
+         0,1,-1,0,0,
+         0,0,1,-1,0,
+         0,0,0,1,-1,
+         0,0,0,0,1), nrow = 6, ncol = 5, byrow = TRUE)%>%
+  t()
+
+zerb_2 = cmat_z %*% zerb_1
+zerb_2 = t(zerb_2)
+zerb_2 =cbind(zerbe2[,1], zerb_2)%>%
+  data.frame()
+test2 = hotelling.test(.~X1, data = zerb_2)
+test2
+```
 
 
+#### (c)
+
+```{r}
+zerb_3 = t(zerbe2[, -c(1:6)])
+cmat_z2 <- matrix(c(-1, 1), nrow = 2, ncol = 1, byrow = TRUE) %>% t()
 
 
+zerb_4 = cmat_z2 %*% zerb_3
+zerb_4 = t(zerb_4)
+zerb_4 =cbind(zerbe2[,1], zerb_4)%>%
+  data.frame()
 
 
+test3 = hotelling.test(.~X1, data = zerb_4)
+test3
+```
 
 
+### EDA
 
 
+```{r}
+z_df = zerbe2%>%
+  pivot_longer(
+    cols = "0h":"3h",
+    names_to = "hours",
+    values_to = "measurement"
+  ) %>%
+   mutate(hours = as.factor(hours),
+          assignment = as.factor(assignment),
+          id  = as.factor(id))%>%
+  as.data.frame()
+```
 
 
+```{r}
+z_p1 =  ggplot(data = z_df, aes(x = hours, 
+             y = measurement, 
+             col = assignment, 
+             group = assignment)) + geom_smooth()
 
+z_p1
+```
 
+We can conclude that the 2 groups are not parallel.
 
+```{r}
+z_p2 =  ggplot(data = z_df, aes(x = hours, 
+             y = measurement, 
+             fill = assignment,
+             alpha =0.3))+geom_boxplot()
+  
+z_p2 
+```
+
+We can conclude that in control group, Plasma inorganic phosphate measurements are lower all the time. 
 
