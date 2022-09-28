@@ -21,12 +21,12 @@ knitr::opts_chunk$set(echo = TRUE,
 tlc = read.table("./TLC.dat") %>% 
   janitor::clean_names() %>% 
   rename(id = v1,
-         group = v2,
+         assignment = v2,
          week0 = v3,
          week1 = v4,
          week4 = v5,
          week6 = v6)%>%
-  mutate(group = recode(group,"P" = 0,"A" = 1))%>%
+  mutate(assignment = as.factor(assignment))%>%
            as.data.frame()
 
 zerbe2 = read.table("./ZERBE2.DAT") %>% 
@@ -44,7 +44,7 @@ zerbe2 = read.table("./ZERBE2.DAT") %>%
 
 # Part A
 
-## 1.
+## 1
 
 ### (a) H0: ABC = D = 0
 
@@ -109,15 +109,68 @@ matrix(c(-1, 1), nrow = 2, ncol = 1, byrow = TRUE)
 
 
 
+# Part B
+
+## 1
+
+### EDA
+
+```{r}
+tlc_df = tlc %>% 
+  pivot_longer(cols = week0:week6, 
+               names_to = "week", 
+               values_to = "blood_lead_levels_mg_dL") %>% 
+  mutate(week = as.factor(week))
+```
 
 
+```{r}
+tlc_p1 = ggplot(data = tlc_df, aes(x = week, 
+             y = blood_lead_levels_mg_dL, 
+             col = assignment, 
+             group = id)) + geom_line()
+
+tlc_p1
+```
 
 
+```{r}
+tlc_p2 =  ggplot(data = tlc_df, aes(x = week, 
+             y = blood_lead_levels_mg_dL, 
+             col = assignment, 
+             group = assignment)) + geom_smooth()
+
+tlc_p2
+```
 
 
+```{r}
+tlc_p3 =  ggplot(data = tlc_df, aes(x = week, 
+             y = blood_lead_levels_mg_dL, 
+             fill = assignment,
+             alpha =0.3))+geom_boxplot()
+  
+tlc_p3 
+```
+
+### Hotelling's T2 test
+
+```{r}
+tlc_test1 = hotelling.test(.~assignment, data = tlc[,-1])
+tlc_test1
+```
 
 
-
+```{r}
+tlc2 = t(tlc[,-c(1:2)]) 
+cmat = matrix(c(-1, 1, 0, 0, 0, -1, 1, 0, 0, 0, -1, 1), ncol = 4, byrow = TRUE)
+tlc3 = cmat %*% tlc2
+tlc3 = t(tlc3)
+tlc3 = cbind(tlc[,2],tlc3) %>%
+  data.frame()
+tlc_test2 = hotelling.test(.~X1, data = tlc3)
+tlc_test2
+```
 
 
 
